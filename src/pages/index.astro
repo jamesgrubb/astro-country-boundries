@@ -1,4 +1,18 @@
 ---
+// const data = await fetch("./api/countries.json").then((res) => res.json());
+// type Country = {
+// 	name: string;
+// 	code: string;
+// 	boundries: {
+// 		lat: number;
+// 		lon: number;
+// 	}[];
+// };
+
+// const countries: Country[] = data
+
+
+import CountryPicker from "@/components/CountryPicker";
 
 ---
 
@@ -12,5 +26,6 @@
 	</head>
 	<body>
 		<h1>Astro</h1>
+		<CountryPicker client:load/>
 	</body>
 </html>
