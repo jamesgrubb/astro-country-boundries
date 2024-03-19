@@ -21,10 +21,11 @@ export default function CountryPicker() {
       const countries = await response.json();
       setCountries(countries);
     })();
-    if(mapContainer.current) return;
+    if(!mapContainer.current) return;
+    mapboxgl.accessToken="pk.eyJ1IjoibWFraW5ndGhpbmdzIiwiYSI6ImNsdGc1N205MDBmMHgyam8xamVyOHI4YTIifQ.ewldWSKthpPIwCXvuKjPRw"
     map.current = new mapboxgl.Map({      
       container: mapContainer.current,
-      style: "mapbox://styles/mapbox/country_boundaries_v1",
+      style: "mapbox://styles/mapbox/country_boundaries_v1", 
       center: [0, 0],
       zoom: 0,
       interactive: false
@@ -33,21 +34,7 @@ export default function CountryPicker() {
 
   
 
-  if (mapContainer.current && selected) {
-    mapboxgl.accessToken = "pk.eyJ1IjoibWFraW5ndGhpbmdzIiwiYSI6ImNsdGc1N205MDBmMHgyam8xamVyOHI4YTIifQ.ewldWSKthpPIwCXvuKjPRw"
-    const map = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/country_boundaries_v1",
-      center: [0, 0],
-      zoom: 0,
-      interactive: false    
-    })
-
-    map.on('load', () => {
-      map.setFilter('country_boundaries', [ '==', 'iso_3166_1_alpha_3', selected ]);
-    })
-  }
-
+  
   const handleOnChange = (e) => {
     setSelected(e.target.value);
   }
@@ -55,7 +42,7 @@ export default function CountryPicker() {
 
   return (
 <>
-    <Select  onValueChange={e => setSelected(e)}   >
+    <Select onValueChange={e => setSelected(e)}   >
       <SelectTrigger  className="w-max">
         <SelectValue placeholder="Theme" />
       </SelectTrigger>
@@ -70,7 +57,9 @@ export default function CountryPicker() {
       </SelectContent>
     </Select>
 
+    <section>
     <div className='absolute inset-0 -z-10' ref={mapContainer}></div>
+    </section>
     </>
   );
 }
