@@ -13,7 +13,9 @@
 
 
 import CountryPicker from "@/components/CountryPicker";
+import Map from "@/components/Map";
 import 'mapbox-gl/dist/mapbox-gl.css';
+import MapMaker from '@/components/MapMaker'
 ---
 
 <html lang="en">
@@ -26,6 +28,6 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 	</head>
 	<body>
 		<h1>Astro</h1>
-		<CountryPicker client:load/>
+		<MapMaker client:load/>
 	</body>
 </html>

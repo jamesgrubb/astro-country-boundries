@@ -1,67 +1,49 @@
-import React, { useState, useEffect, useRef } from 'react'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select"
-  
-  import mapboxgl from 'mapbox-gl';
+import React, { useRef, useEffect, useState } from 'react';
+import mapboxgl from 'mapbox-gl';
+// import './Map.css';
 
-export default function CountryPicker() {
-  const [countries, setCountries] = useState([]);
-  const [selected, setSelected] = useState(null);
-  const mapContainer = useRef(null);
-  const map = useRef(null);
+mapboxgl.accessToken =
+  'pk.eyJ1IjoibWFraW5ndGhpbmdzIiwiYSI6ImNsdGc1N205MDBmMHgyam8xamVyOHI4YTIifQ.ewldWSKthpPIwCXvuKjPRw';
 
+const Map = () => {
+  const mapContainerRef = useRef(null);
+
+  const [lng, setLng] = useState(5);
+  const [lat, setLat] = useState(34);
+  const [zoom, setZoom] = useState(1.5);
+
+  // Initialize map when component mounts
   useEffect(() => {
-    (async () => {
-      const response = await fetch('./countryCodes.json');
-      const countries = await response.json();
-      setCountries(countries);
-    })();
-    if(!mapContainer.current) return;
-    mapboxgl.accessToken="pk.eyJ1IjoibWFraW5ndGhpbmdzIiwiYSI6ImNsdGc1N205MDBmMHgyam8xamVyOHI4YTIifQ.ewldWSKthpPIwCXvuKjPRw"
-    map.current = new mapboxgl.Map({      
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/country_boundaries_v1", 
-      center: [0, 0],
-      zoom: 0,
-      interactive: false
-    })
-  }, []);
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [lng, lat],
+      zoom: zoom
+    });
 
-  
+    // Add navigation control (the +/- zoom buttons)
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-  
-  const handleOnChange = (e) => {
-    setSelected(e.target.value);
-  }
+    map.on('move', () => {
+      setLng(map.getCenter().lng.toFixed(4));
+      setLat(map.getCenter().lat.toFixed(4));
+      setZoom(map.getZoom().toFixed(2));
+    });
 
+    // Clean up on unmount
+    return () => map.remove();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-<>
-    <Select onValueChange={e => setSelected(e)}   >
-      <SelectTrigger  className="w-max">
-        <SelectValue placeholder="Theme" />
-      </SelectTrigger>
-      <SelectContent >
-        {countries.map((country) => {
-          return (
-            //Get contents of value
-
-            <SelectItem onChangeCapture={handleOnChange}   key={country['Country']} value={country["Alpha-3 code"]}>{country["Country"]}</SelectItem>
-          );
-        })}
-      </SelectContent>
-    </Select>
-
-    <section>
-    <div className='absolute inset-0 -z-10' ref={mapContainer}></div>
-    </section>
-    </>
+    <div className='h-screen'>
+      <div style={{position: 'absolute', top: 0, right: 0, height:'100vh'}}className='sidebarStyle bg-slate-200'>
+        <div  className='bg-secondary text-primary'>
+        Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+        </div>
+      </div>
+      <div className='h-screen map-container' ref={mapContainerRef} />
+    </div>
   );
-}
+};
 
-
+export default Map;
